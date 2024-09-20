@@ -16,4 +16,13 @@ model User {
   updatedAt DateTime @updatedAt
   email     String @unique
   password  String
+  profile Profile?
+}
+
+model Profile {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [authorId], references: [id])
+  authorId Int @unique
+  firstName String
+  lastName String
 }
