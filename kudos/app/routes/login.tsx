@@ -11,10 +11,9 @@ import { getUser } from '~/utils/auth.server'
 import { useActionData } from '@remix-run/react'
 import { useRef, useEffect } from 'react'
 
-
 export const loader: LoaderFunction = async ({ request }) => {
   // If there's already a user in the session, redirect to the home page
-  return (await getUser(request)) ? redirect('/') : null
+  return (await getUser(request)) ? redirect('/home') : null
 }
 
 export const action: ActionFunction = async ({ request }) => {
@@ -67,10 +66,9 @@ export default function Login() {
   const actionData = useActionData()
   // 2
   const firstLoad = useRef(true)
-  const [errors, setErrors] = useState(actionData?.errors || {})
+  const [errors, setErrors] = useState(actionData?.error || {})
   const [formError, setFormError] = useState(actionData?.error || '')
   // 3
-  
 
   // Updates the form data when an input changes
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>, field: string) => {
@@ -83,7 +81,7 @@ export default function Login() {
     firstName: actionData?.fields?.lastName || '',
     lastName: actionData?.fields?.firstName || '',
   })
-
+  
   useEffect(() => {
     if (!firstLoad.current) {
       const newState = {
@@ -105,7 +103,6 @@ export default function Login() {
   }, [formData])
 
   useEffect(() => { firstLoad.current = false }, [])
-  
 
   return (
     <Layout>
