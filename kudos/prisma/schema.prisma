@@ -1,5 +1,15 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+model User {
+  id            Int      @id @default(autoincrement())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  email         String   @unique
+  password      String
+  profile       Profile?
+
+  // Relations
+  authoredKudos Kudo[]   @relation("AuthoredKudos")
+  receivedKudos Kudo[]   @relation("ReceivedKudos")
+}
 
 generator client {
   provider = "prisma-client-js"
@@ -10,59 +20,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  email     String @unique
-  password  String
-  profile Profile?
-  authoredKudos Kudo[]  @relation("AuthoredKudos")
-  kudos         Kudo[]  @relation("RecievedKudos")
-}
-
 model Profile {
-  id Int @id @default(autoincrement())
-  user User @relation(fields: [authorId], references: [id])
-  authorId Int @unique
+  id        Int    @id @default(autoincrement())
+  user      User   @relation(fields: [authorId], references: [id])
+  authorId  Int    @unique
   firstName String
-  lastName String
+  lastName  String
 }
 
-enum Emoji {
-  THUMBSUP
-  PARTY
-  HANDSUP
-}
-
-enum Department {
-  MARKETING
-  SALES
-  ENGINEERING
-  HR
-}
-
-enum Color {
-  RED
-  GREEN
-  YELLOW
-  BLUE
-  WHITE
-}
-
-type KudoStyle {
-  backgroundColor Color @default(YELLOW)
-  textColor       Color @default(WHITE)
-  emoji           Emoji @default(THUMBSUP)
-}
 
 model Kudo {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  message     String
-  createdAt   DateTime   @default(now())
-  style       KudoStyle?
-  author      User       @relation(references: [id], fields: [authorId], "AuthoredKudos")
-  authorId    String     @db.ObjectId
-  recipient   User       @relation(references: [id], fields: [recipientId], "RecievedKudos")
-  recipientId String     @db.ObjectId
+  id             Int      @id @default(autoincrement())
+  message        String
+  createdAt      DateTime @default(now())
+
+  // Kudo style attributes as separate fields
+  backgroundColor String   @default("YELLOW")
+  textColor       String   @default("WHITE")
+  emoji           String   @default("THUMBSUP")
+
+  // Author and recipient relations
+  author          User     @relation("AuthoredKudos", fields: [authorId], references: [id])
+  authorId        Int
+  recipient       User     @relation("ReceivedKudos", fields: [recipientId], references: [id])
+  recipientId     Int
 }
