@@ -27,3 +27,14 @@ const uploadHandler: UploadHandler = async ({ filename, name, stream }) => {
     // 4
     return location;
   };
+
+  export async function uploadAvatar(request: Request) {
+    const formData = await unstable_parseMultipartFormData(
+      request,
+      uploadHandler
+    );
+  
+    const file = formData.get("profile-pic")?.toString() || "";
+  
+    return file;
+  }
