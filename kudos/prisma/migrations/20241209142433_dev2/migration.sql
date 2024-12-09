@@ -1,0 +1,17 @@
+-- AlterTable
+ALTER TABLE "Profile" ADD COLUMN "department" TEXT DEFAULT 'MARKETING';
+ALTER TABLE "Profile" ADD COLUMN "profilePicture" TEXT;
+
+-- CreateTable
+CREATE TABLE "Kudo" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "message" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "backgroundColor" TEXT NOT NULL DEFAULT 'YELLOW',
+    "textColor" TEXT NOT NULL DEFAULT 'WHITE',
+    "emoji" TEXT NOT NULL DEFAULT 'THUMBSUP',
+    "authorId" INTEGER NOT NULL,
+    "recipientId" INTEGER NOT NULL,
+    CONSTRAINT "Kudo_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "Kudo_recipientId_fkey" FOREIGN KEY ("recipientId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);

@@ -42,7 +42,7 @@ model Kudo {
   emoji           String   @default("THUMBSUP")
 
   // Author and recipient relations
-  author          User     @relation("AuthoredKudos", fields: [authorId], references: [id])
+  author          User     @relation("AuthoredKudos", fields: [authorId], onDelete:Cascade, references: [id])
   authorId        Int
   recipient       User     @relation("ReceivedKudos", fields: [recipientId], references: [id])
   recipientId     Int
