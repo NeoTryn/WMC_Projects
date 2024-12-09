@@ -26,6 +26,8 @@ model Profile {
   authorId  Int    @unique
   firstName String
   lastName  String
+  department String? @default("MARKETING")
+  profilePicture String?
 }
 
 
