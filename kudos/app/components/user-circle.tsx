@@ -13,7 +13,7 @@ export function UserCircle({ profile, onClick, className }: props) {
       onClick={onClick}
       style={{
         backgroundSize: "cover",
-        ...(profile.profilePicture ? { backgroundImage: `url(${profile.profilePicture})` } : {}),
+        ...(profile.profilePicture ? { backgroundImage: `url(/pps/${profile.profilePicture})` } : {}),
       }}
     >
        {

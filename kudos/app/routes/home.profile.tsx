@@ -11,6 +11,7 @@ import { LoaderFunction, ActionFunction, redirect} from "@remix-run/node";
 import { updateUser, deleteUser } from "~/utils/user.server";
 import { ImageUploader } from '~/components/image-uploader'
 // 👇 Added the logout functio
+import { uploadProfilePicture } from "~/utils/image.server";
 
 // ...
 
@@ -70,22 +71,20 @@ export default function ProfileSettings() {
                     {formError}
                 </div>
                 <div className="flex">
-                <div className="w-1/3">
-                  <ImageUploader onChange={handleFileUpload} imageUrl={formData.profilePicture || ''}/>
-                </div>
                     <div className="flex-1">
-              <form method="post" onSubmit={e => !confirm('Are you sure?') ? e.preventDefault() : true}>
+              <form method="post" encType="multipart/form-data" onSubmit={e => !confirm('Are you sure?') ? e.preventDefault() : true}>
                 <FormField htmlFor="firstName" label="First Name" value={formData.firstName} onChange={e => handleInputChange(e, 'firstName')} error={actionData?.errors?.lastName} />
                 <FormField htmlFor="lastName" label="Last Name" value={formData.lastName} onChange={e => handleInputChange(e, 'lastName')} error={actionData?.errors?.lastName}/>
                 <SelectBox
-             className="w-full rounded-xl px-3 py-2 text-gray-400"
-             id="department"
-             label="Department"
-             name="department"
-             options={departments}
-             value={formData.department}
-             onChange={e => handleInputChange(e, 'department')}
+                    className="w-full rounded-xl px-3 py-2 text-gray-400"
+                    id="department"
+                    label="Department"
+                    name="department"
+                    options={departments}
+                    value={formData.department}
+                    onChange={e => handleInputChange(e, 'department')}
                 />
+                <input type="file" name="profilePicture"/>
                 <button name="_action" value="delete" className="rounded-xl w-full bg-red-300 font-semibold text-white mt-4 px-16 py-2 transition duration-300 ease-in-out hover:bg-red-400 hover:-translate-y-1">
                   Delete Account
                 </button>
@@ -105,10 +104,23 @@ export default function ProfileSettings() {
     )
 }
 
+
+
+
+
+
+
 export const action: ActionFunction = async ({ request }) => {
     const userId = await requireUserId(request);
 
     const form = await request.formData();
+
+
+    const profilePicture = form.get("profilePicture"); 
+    const ppname = await uploadProfilePicture(profilePicture);
+
+    // prisma.upadateUser...
+
     // 1
     let firstName = form.get('firstName')
     let lastName = form.get('lastName')
@@ -151,7 +163,8 @@ export const action: ActionFunction = async ({ request }) => {
           await updateUser(userId, {
              firstName,
              lastName,
-             department: department as string
+             department: department as string,
+             profilePicture: ppname as string
           })
           return redirect('/home')
       case 'delete':

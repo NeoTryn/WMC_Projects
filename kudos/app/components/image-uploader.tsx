@@ -56,7 +56,7 @@ export const ImageUploader = ({ onChange, imageUrl }: props) => {
             {
                 <p className="font-extrabold text-4xl text-gray-200 cursor-pointer select-none transition duration-300 ease-in-out group-hover:opacity-0 pointer-events-none z-10">+</p>
             }
-            <input type="file" ref={fileInputRef} onChange={handleChange} className="hidden" />
+            <input type="file" name="profilePicture" ref={fileInputRef} onChange={handleChange} className="hidden" />
         </div>
     )
 }
