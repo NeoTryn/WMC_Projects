@@ -1,5 +1,5 @@
 model User {
-  id            Int      @id @default(autoincrement())
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   email         String   @unique
@@ -11,39 +11,53 @@ model User {
   receivedKudos Kudo[]   @relation("ReceivedKudos")
 }
 
+enum Department {
+  MARKETING
+  ENGINEERING
+  DESIGN
+  HR
+}
+
+enum Emoji {
+  THUMBSUP
+  HEART
+  STAR
+  TROPHY
+}
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model Profile {
-  id        Int    @id @default(autoincrement())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
   user      User   @relation(fields: [authorId], references: [id])
-  authorId  Int    @unique
+  authorId  String @unique @db.ObjectId
   firstName String
   lastName  String
-  department String? @default("MARKETING")
+  department Department? @default(ENGINEERING)
   profilePicture String?
 }
 
 
 model Kudo {
-  id             Int      @id @default(autoincrement())
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
   message        String
   createdAt      DateTime @default(now())
 
   // Kudo style attributes as separate fields
   backgroundColor String   @default("YELLOW")
   textColor       String   @default("WHITE")
-  emoji           String   @default("THUMBSUP")
+  emoji           Emoji?   @default(THUMBSUP)
 
   // Author and recipient relations
   author          User     @relation("AuthoredKudos", fields: [authorId], onDelete:Cascade, references: [id])
-  authorId        Int
+  authorId        String   @db.ObjectId
   recipient       User     @relation("ReceivedKudos", fields: [recipientId], references: [id])
-  recipientId     Int
+  recipientId     String   @db.ObjectId
 }
